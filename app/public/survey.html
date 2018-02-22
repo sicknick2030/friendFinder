@@ -1,0 +1,242 @@
+<!--     var config = {
+      '.chosen-select'           : {},
+      '.chosen-select-deselect'  : {allow_single_deselect:true},
+      '.chosen-select-no-single' : {disable_search_threshold:10},
+      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+      '.chosen-select-width'     : {width:"95%"}
+    }
+    for (var selector in config) {
+      $(selector).chosen(config[selector]);
+    }
+    // Capture the form inputs 
+    $("#submit").on("click", function(){
+    	// Form validation
+    	function validateForm() {
+		  var isValid = true;
+		  $('.form-control').each(function() {
+		    if ( $(this).val() === '' )
+		        isValid = false;
+		  });
+		  $('.chosen-select').each(function() {
+		  	if( $(this).val() === "")
+		  		isValid = false
+		  })
+		  return isValid;
+		}
+		// If all required fields are filled
+		if (validateForm() == true)
+		{
+			// Create an object for the user's data
+	    	var userData = {
+	    		name: $("#name").val(),
+	    		photo: $("#photo").val(),
+	    		scores: [$("#q1").val(), $("#q2").val(), $("#q3").val(), $("#q4").val(), $("#q5").val(), $("#q6").val(), $("#q7").val(), $("#q8").val(), $("#q9").val(), $("#q10").val(), ]
+	    	}
+	    	// Grab the URL of the website
+	    	var currentURL = window.location.origin;
+	    	// AJAX post the data to the friends API. 
+	    	$.post(currentURL + "/api/friends", userData, function(data){
+	    		// Grab the result from the AJAX post so that the best match's name and photo are displayed.
+	    		$("#matchName").text(data.name);
+	    		$('#matchImg').attr("src", data.photo);
+		    	// Show the modal with the best match 
+		    	$("#resultsModal").modal('toggle');
+	    	});
+		}
+		else
+		{
+			alert("Please fill out all fields before submitting!");
+		}
+    	
+    	return false;
+    }); -->
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Activites Survey</title>
+
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery.js"></script>
+	
+</head>
+<body>
+	<div id="wrapper">
+      <h1>Friend Finder Survey!</h1>
+      <div id="sub-wrapper">
+        <div id="quiz-area">
+          <button id="start">Start</button>
+        </div>
+      </div>
+    </div>
+
+<script>
+var panel = $("#quiz-area");
+
+
+var questions = [{
+  question: "How often do you go on a hike?",
+  answers: ["1", "2", "3", "4", "5"]
+}, {
+  question: "How often do you go to the movies?",
+  answers: ["1", "2", "3", "4", "5"]
+}, {
+  question: "How often do you go shopping?",
+  answers: ["1", "2", "3", "4", "5"]
+}, {
+  question: "How often do you play sports?",
+  answers: ["1", "2", "3", "4", "5"]
+}, {
+  question: "How often do you play video games?",
+  answers: ["1", "2", "3", "4", "5"]
+}, {
+  question: "How often do you cook?",
+  answers: ["1", "2", "3", "4", "5"]
+}, {
+  question: "How often do you travel?",
+  answers: ["1", "2", "3", "4", "5"]
+}, {
+  question: "How often do you go out to party?",
+  answers: ["1", "2", "3", "4", "5"]
+}, {
+  question: "How often do you exercise?",
+  answers: ["1", "2", "3", "4", "5"]
+}, {
+  question: "How often do you go to the beach?",
+  answers: ["1", "2", "3", "4", "5"]
+}, ];
+
+var game = {
+
+
+	start: function() {
+    // timer = setInterval(game.countdown, 1000);
+
+    // $("#sub-wrapper").prepend("<h2>Time Remaining: <span id='counter-number'>120</span> Seconds</h2>");
+
+    	$("#start").remove();
+
+    	panel.append("<form id='match-name'> Name: <input id='name' type='text' class='form-control'>");
+
+    	panel.append("<form id='match-img'> Image: <input id='photo' type='text' class='form-control'>");
+
+    	for (var i = 0; i < questions.length; i++) {
+      		panel.append("<h2>" + questions[i].question + "</h2>");
+      
+        	panel.append("<select id=q" + i + " name='answers-" + i +"'class='chosen-select'> <option value=''>Select A Number</option> <option value='1'</option>1 (not at all)<option value='2'</option>2 (Only a little bit)<option value='3'</option>3 (Sometimes)<option value='4'</option>4 (Pretty often)<option value='5'</option>5 (All the time)</select>");  
+    	};
+
+    	panel.append("<button id='done'>Done</button>");
+  	},
+  
+	done: function() {
+		var config = {
+	      '.chosen-select'           : {},
+	      '.chosen-select-deselect'  : {allow_single_deselect:true},
+	      '.chosen-select-no-single' : {disable_search_threshold:10},
+	      '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+	      '.chosen-select-width'     : {width:"95%"}
+	    };
+
+	    // for (var selector in config) {
+	    //   $(selector).chosen(config[selector]);
+	    // };
+	    // Capture the form inputs 
+	    $("#done").on("click", function(){
+	    	// Form validation
+	    	function validateForm() {
+			  var isValid = true;
+			  $('.form-control').each(function() {
+			    if ( $(this).val() === '' )
+			        isValid = false;
+			  	});
+			  $('.chosen-select').each(function() {
+			  	if( $(this).val() === "")
+			  		isValid = false
+			  });
+			  return isValid;
+			};
+			// If all required fields are filled
+			if (validateForm() == true)
+			{
+				// Create an object for the user's data
+			    var userData = {
+			      type:"POST",
+        		  dataType:"json",
+			      name: $("#name").val(),
+			      image:$("#photo").val(),
+			      scores:[
+			       $("#q0").val(),
+			       $("#q1").val(),
+			       $("#q2").val(),
+			       $("#q3").val(),
+			       $("#q4").val(),
+			       $("#q5").val(),
+			       $("#q6").val(),
+			       $("#q7").val(),
+			       $("#q8").val(),
+			       $("#q9").val()
+			      ]
+			    };
+			};								    
+	
+			var currentURL = window.location.origin;
+
+			$.post(currentURL + "/api/friends", userData, function(data){
+				$("#match-name").text(data.name);
+				$("#match-img").attr("src", data.photo);
+			});
+    	});
+    },
+};
+  // app.post("/api/new", function(req, res) {
+  // // req.body hosts is equal to the JSON post sent from the user
+  // // This works because of our body-parser middleware
+  //   var newcharacter = req.body;
+  //   newcharacter.routeName = newcharacter.name.replace(/\s+/g, "").toLowerCase();
+
+  //   console.log(newcharacter);
+
+  //   characters.push(newcharacter);
+
+  //   res.json(newcharacter);
+  // }); 
+  //   Make a post request to our back end
+  //   Matching appropriate route
+  //   Sending the user input
+
+//   result: function() {
+
+//     clearInterval(timer);
+
+//     $("#sub-wrapper h2").remove();
+
+//     panel.html("<h2>All Done!</h2>");
+//     panel.append("<h3>Correct Answers: " + this.correct + "</h3>");
+//     panel.append("<h3>Incorrect Answers: " + this.incorrect + "</h3>");
+//     panel.append("<h3>Unanswered: " + (questions.length - (this.incorrect + this.correct)) + "</h3>");
+//   }
+// };
+
+// CLICK EVENTS
+$(document).ready(function(){
+  
+  $(document).on("click", "#start", function() {
+    game.start();
+  });
+
+
+  $(document).on("click", "#done", function() {
+    game.done();
+  });
+});
+</script>
+</body>
+
+</html>
+
+</body>
+</html>
